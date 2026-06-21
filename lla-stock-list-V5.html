@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Little Loved Again — Stock List</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#D4537E;--rose-l:#FBEAF0;--rose-d:#72243E;--sage:#1D9E75;--sage-l:#E1F5EE;--sage-d:#085041;--honey:#BA7517;--honey-l:#FAEEDA;--honey-d:#633806;--cream:#F9F6F1;--ink:#2C2A26;--muted:#7A7570;--border:#E8E3DC}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-mark{width:30px;height:30px;background:var(--rose-l);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:15px;height:15px;fill:var(--rose)}
+.logo-name{font-family:'Fraunces',serif;font-size:15px;color:var(--ink)}
+.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.02em}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:14px 16px 6px}
+.stat{background:white;border-radius:12px;border:1px solid var(--border);padding:11px 14px;text-align:center}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:3px;letter-spacing:.02em;text-transform:uppercase}
+.stat-num{font-family:'Fraunces',serif;font-size:24px;color:var(--ink)}
+.stat-num.green{color:var(--sage)}
+.tabs{display:flex;gap:6px;padding:12px 16px 8px}
+.tab{font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:white;color:var(--muted)}
+.tab.active{background:var(--rose);color:white;border-color:var(--rose)}
+.add-btn{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 16px 10px;width:calc(100% - 32px);font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;padding:9px;color:var(--rose);background:transparent;border:1.5px dashed #F4C0D1;border-radius:12px;cursor:pointer}
+.add-btn:hover{background:var(--rose-l)}
+.add-btn svg{width:16px;height:16px;stroke:var(--rose);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.list{padding:0 16px;display:flex;flex-direction:column;gap:8px;padding-bottom:2rem}
+.card{display:flex;gap:10px;align-items:flex-start;background:white;border:1px solid var(--border);border-radius:14px;padding:10px;cursor:pointer}
+.card.needs-info{border-left:3px solid var(--honey)}
+.thumb{width:60px;height:60px;flex-shrink:0;border-radius:10px;background:#F0EDE8;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb svg{width:24px;height:24px;stroke:#B0A898;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.body{flex:1;min-width:0}
+.row1{display:flex;align-items:flex-start;justify-content:space-between;gap:5px;margin-bottom:2px}
+.brand{font-size:13px;font-weight:600;color:var(--ink)}
+.brand.unknown{color:var(--honey);font-style:italic}
+.desc{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:5px}
+.badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
+.b{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.b-num{background:#F0EDE8;color:#7A7570}
+.b-size{background:var(--sage-l);color:var(--sage-d)}
+.b-t1{background:var(--rose-l);color:var(--rose-d)}
+.b-t2{background:var(--honey-l);color:var(--honey-d)}
+.b-t3{background:#F0EDE8;color:#7A7570}
+.b-warn{background:var(--honey-l);color:var(--honey-d)}
+.pill{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;border:none}
+.p-available{background:var(--sage-l);color:var(--sage-d)}
+.p-listed{background:var(--honey-l);color:var(--honey-d)}
+.p-sold{background:#F0EDE8;color:#7A7570}
+.prices{display:flex;gap:8px;align-items:center}
+.price-sm{font-size:11px;color:var(--muted)}
+.profit{font-size:12px;font-weight:700;color:var(--sage)}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:13px}
+.overlay{position:fixed;inset:0;background:rgba(44,42,38,.4);display:flex;align-items:flex-start;justify-content:center;padding:40px 14px 14px;z-index:30;overflow-y:auto}
+.modal{background:white;border-radius:16px;border:1px solid var(--border);width:100%;max-width:400px;padding:18px}
+.modal-title{font-family:'Fraunces',serif;font-size:16px;margin-bottom:14px;color:var(--ink)}
+.modal label{font-size:11px;color:var(--muted);display:block;margin:10px 0 3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.modal input,.modal select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--ink)}
+.modal input:focus,.modal select:focus{outline:none;border-color:var(--rose)}
+.half{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.brand-hint{font-size:11px;font-weight:600;margin-top:3px;height:14px}
+.photo-prev{width:64px;height:64px;border-radius:10px;background:#F0EDE8;display:flex;align-items:center;justify-content:center;margin-top:6px;overflow:hidden}
+.photo-prev img{width:100%;height:100%;object-fit:cover}
+.photo-prev svg{width:24px;height:24px;stroke:#B0A898;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.mactions{display:flex;gap:8px;margin-top:16px}
+.mactions button{flex:1;padding:9px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer}
+.btn-save{background:var(--rose);color:white;border:none}
+.btn-cancel{background:white;color:var(--muted);border:1px solid var(--border)}
+.btn-del{background:white;color:#C0392B;border:1px solid #E8AAAA;flex:0 0 auto;padding:9px 12px}
+</style>
+</head>
+<body>
+<div id="app" style="position:relative;min-height:360px;padding-bottom:1.5rem">
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 20 20"><path d="M10 17s-7-4.5-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 17 8c0 4.5-7 9-7 9z"/></svg></div>
+    <div><div class="logo-name">Little Loved Again</div><div class="logo-sub">Buttons &amp; Bows</div></div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-label">In stock</div><div class="stat-num" id="s-stock">0</div></div>
+  <div class="stat"><div class="stat-label">Listed</div><div class="stat-num" id="s-listed">0</div></div>
+  <div class="stat"><div class="stat-label">Sold</div><div class="stat-num" id="s-sold">0</div></div>
+  <div class="stat"><div class="stat-label">Total profit</div><div class="stat-num green" id="s-profit">$0.00</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="setTab('active',this)">Stock</button>
+  <button class="tab" onclick="setTab('sold',this)">Sold archive</button>
+</div>
+
+<button class="add-btn" id="addbtn" onclick="openAdd()">
+  <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  Add item manually
+</button>
+
+<div class="list" id="list"></div>
+<div id="modal-slot"></div>
+</div>
+
+<script>
+const BRANDS={
+  'bobo choses':1,'lacey lane':1,'ziggy lou':1,'oobi':1,
+  'goldie + ace':2,'goldie+ace':2,'kynd baby':2,'kynd':2,
+  'wilson + frenchy':2,'wilson+frenchy':2,'purebaby':2,
+  'seed heritage':3,'seed':3,'country road':3,'bonds':3,
+  'next':3,'h&m':3,'target':3,'cotton on':3,'gap':3,'marquise':3,'buho':2
+};
+const TIER={1:'Top resale',2:'Strong seller',3:'Quick flip'};
+
+const SEED=[{"id":"s001","driveId":"17KsA2o8rWNWC_K3gN0k2Trrcr6nL09KM","filename":"003.marquise.dress.0.2.jpg","num":"003","brand":"marquise","desc":"dress","size":"0","condition":"Excellent","buy":"2","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=17KsA2o8rWNWC_K3gN0k2Trrcr6nL09KM&sz=w200"},{"id":"s002","driveId":"1iXbtQc26DQgcaN-OLJHjsPmJupeoIk_y","filename":"001.bonds.romper-cozysuit.0000.2.jpg","num":"001","brand":"bonds","desc":"romper-cozysuit","size":"0000","condition":"Excellent","buy":"2","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1iXbtQc26DQgcaN-OLJHjsPmJupeoIk_y&sz=w200"},{"id":"s003","driveId":"1RvIDNbzybNdDoFAXZuVYRH8LoMbtbE8A","filename":"002.buho.sunsuit-romper.6m.2.jpg","num":"002","brand":"buho","desc":"sunsuit-romper","size":"6m","condition":"Excellent","buy":"2","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1RvIDNbzybNdDoFAXZuVYRH8LoMbtbE8A&sz=w200"},{"id":"s004","driveId":"1-rKxHH1BNmkto78vQVAiBpa2H65g3Jj1","filename":"20260620_160546.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1-rKxHH1BNmkto78vQVAiBpa2H65g3Jj1&sz=w200"},{"id":"s005","driveId":"1fZ7TZj6VfIL4j48fiwYIA93IcAeSwPoi","filename":"20260620_160438.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1fZ7TZj6VfIL4j48fiwYIA93IcAeSwPoi&sz=w200"},{"id":"s006","driveId":"1UukAVVNiWWQk7AuCN791FTZfnep-1Aw2","filename":"20260620_160325.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1UukAVVNiWWQk7AuCN791FTZfnep-1Aw2&sz=w200"},{"id":"s007","driveId":"1cq6SPArH5TK7zZOnaGLoq4_aiQ1K1osc","filename":"20260620_160234.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1cq6SPArH5TK7zZOnaGLoq4_aiQ1K1osc&sz=w200"},{"id":"s008","driveId":"1T1U5WspnNpxgZL3wD9UqjngfujGKK4Jl","filename":"20260620_155846.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1T1U5WspnNpxgZL3wD9UqjngfujGKK4Jl&sz=w200"},{"id":"s009","driveId":"1qLRKwYtIMnHe5FDpCRav4mA0MBod-Vkj","filename":"20260620_155801.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1qLRKwYtIMnHe5FDpCRav4mA0MBod-Vkj&sz=w200"},{"id":"s010","driveId":"1yLOw3RBFivh7VPnO_HGOVj0eb78DgbqE","filename":"20260620_155703.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1yLOw3RBFivh7VPnO_HGOVj0eb78DgbqE&sz=w200"},{"id":"s011","driveId":"1CgdJcWsbJrWJ8BpZ8musiCXRgBtao1wc","filename":"20260620_155432.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1CgdJcWsbJrWJ8BpZ8musiCXRgBtao1wc&sz=w200"},{"id":"s012","driveId":"1ml52qPm6yy-CZPrsb_nS8zPQ5T8RlTee","filename":"20260620_155321.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=1ml52qPm6yy-CZPrsb_nS8zPQ5T8RlTee&sz=w200"},{"id":"s013","driveId":"14yO9h79VxjKsyjVlIn_fnttNyjfWNf6e","filename":"20260620_155118.jpg","num":"","brand":"","desc":"","size":"","condition":"Excellent","buy":"","sell":"","status":"available","photoUrl":"https://drive.google.com/thumbnail?id=14yO9h79VxjKsyjVlIn_fnttNyjfWNf6e&sz=w200"}];
+
+// Merge seed into localStorage — seed items added if driveId not already present
+let stock=JSON.parse(localStorage.getItem('lla_stock_v5')||'[]');
+let changed=false;
+for(const s of SEED){
+  if(!stock.find(i=>i.driveId===s.driveId)){stock.push(s);changed=true}
+}
+if(changed){localStorage.setItem('lla_stock_v5',JSON.stringify(stock))}
+
+let tab='active';
+let editId=null;
+
+function save(){localStorage.setItem('lla_stock_v5',JSON.stringify(stock));render()}
+
+function getBrandTier(b){
+  const k=(b||'').toLowerCase().trim();
+  for(const key of Object.keys(BRANDS)){if(k.includes(key))return BRANDS[key]}
+  return 0;
+}
+function tierClass(t){return t===1?'b-t1':t===2?'b-t2':'b-t3'}
+
+function setTab(t,el){
+  tab=t;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('addbtn').style.display=t==='active'?'flex':'none';
+  render();
+}
+
+function cycleStatus(id,e){
+  e.stopPropagation();
+  const it=stock.find(i=>i.id===id);if(!it)return;
+  const cy={available:'listed',listed:'sold',sold:'available'};
+  it.status=cy[it.status]||'available';
+  save();
+}
+
+function imgErr(el){el.parentElement.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#B0A898" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.86H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.86l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>'}
+const SHIRT='<svg viewBox="0 0 24 24" fill="none" stroke="#B0A898" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.86H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.86l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>';
+
+function render(){
+  const inStock=stock.filter(i=>i.status==='available').length;
+  const listed=stock.filter(i=>i.status==='listed').length;
+  const sold=stock.filter(i=>i.status==='sold').length;
+  const profit=stock.filter(i=>i.status==='sold').reduce((s,i)=>s+((parseFloat(i.sell)||0)-(parseFloat(i.buy)||0)),0);
+  document.getElementById('s-stock').textContent=inStock;
+  document.getElementById('s-listed').textContent=listed;
+  document.getElementById('s-sold').textContent=sold;
+  document.getElementById('s-profit').textContent='$'+profit.toFixed(2);
+
+  const visible=tab==='active'?stock.filter(i=>i.status!=='sold'):stock.filter(i=>i.status==='sold');
+  const el=document.getElementById('list');
+  if(!visible.length){el.innerHTML=`<div class="empty">${tab==='active'?'No stock yet':'No sold items yet'}</div>`;return}
+
+  el.innerHTML=visible.map(it=>{
+    const t=getBrandTier(it.brand);
+    const p=it.sell&&it.buy?((parseFloat(it.sell)-parseFloat(it.buy)).toFixed(2)):null;
+    const needsInfo=!it.brand||!it.buy;
+    const ph=it.photoUrl?`<img src="${it.photoUrl}" alt="" onerror="imgErr(this)">`:SHIRT;
+    const sl=it.status.charAt(0).toUpperCase()+it.status.slice(1);
+    return`<div class="card${needsInfo?' needs-info':''}" onclick="openEdit('${it.id}')">
+      <div class="thumb">${ph}</div>
+      <div class="body">
+        <div class="row1">
+          <div>
+            <div class="brand${!it.brand?' unknown':''}">${it.brand||'⚠ needs info'}</div>
+            <div class="desc">${it.desc||it.filename||'—'}</div>
+          </div>
+          <button class="pill p-${it.status}" onclick="cycleStatus('${it.id}',event)">${sl}</button>
+        </div>
+        <div class="badges">
+          ${it.num?`<span class="b b-num">#${it.num}</span>`:''}
+          ${it.size?`<span class="b b-size">Size ${it.size}</span>`:''}
+          ${t?`<span class="b ${tierClass(t)}">${TIER[t]}</span>`:''}
+          ${it.condition?`<span class="b b-t3">${it.condition}</span>`:''}
+          ${needsInfo?`<span class="b b-warn">Tap to fill in</span>`:''}
+        </div>
+        <div class="prices">
+          ${it.buy?`<span class="price-sm">Paid $${parseFloat(it.buy).toFixed(2)}</span>`:''}
+          ${it.sell?`<span class="price-sm">→ $${parseFloat(it.sell).toFixed(2)}</span>`:''}
+          ${p!==null?`<span class="profit">+$${p}</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+function openAdd(){editId=null;showModal(null)}
+function openEdit(id){editId=id;showModal(stock.find(i=>i.id===id))}
+
+function showModal(it){
+  const isEdit=!!it;
+  document.getElementById('modal-slot').innerHTML=`
+  <div class="overlay" id="ov" onclick="closeOuter(event)">
+  <div class="modal">
+    <div class="modal-title">${isEdit?'Edit item':'Add item'}</div>
+    ${it?.photoUrl?`<div class="photo-prev" style="width:100%;height:120px;border-radius:12px;margin-bottom:10px"><img src="${escH(it.photoUrl)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:12px"></div>`:''}
+    <label>Item #</label><input id="m-num" value="${escH(it?.num)}" placeholder="004" style="max-width:90px">
+    <label>Brand</label><input id="m-brand" value="${escH(it?.brand)}" placeholder="e.g. oobi, bonds…" oninput="bHint(this.value)">
+    <div class="brand-hint" id="bhint"></div>
+    <label>Description</label><input id="m-desc" value="${escH(it?.desc)}" placeholder="e.g. romper, dress…">
+    <div class="half">
+      <div><label>Size</label><input id="m-size" value="${escH(it?.size)}" placeholder="000/0/1/2"></div>
+      <div><label>Condition</label><select id="m-cond">${['Excellent','Great','Good','Fair'].map(c=>`<option${it?.condition===c?' selected':''}>${c}</option>`).join('')}</select></div>
+    </div>
+    <div class="half">
+      <div><label>Paid ($)</label><input id="m-buy" type="number" step="0.01" value="${escH(it?.buy)}" placeholder="0.00"></div>
+      <div><label>Sell price ($)</label><input id="m-sell" type="number" step="0.01" value="${escH(it?.sell)}" placeholder="0.00"></div>
+    </div>
+    <label>Status</label>
+    <select id="m-status">${['available','listed','sold'].map(s=>`<option value="${s}"${it?.status===s?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}</select>
+    <div class="mactions">
+      ${isEdit?`<button class="btn-del" onclick="delItem('${it.id}')">🗑</button>`:''}
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveItem()">Save</button>
+    </div>
+  </div></div>`;
+  if(it?.brand)bHint(it.brand);
+}
+
+function bHint(v){
+  const t=getBrandTier(v);const el=document.getElementById('bhint');if(!el)return;
+  el.textContent=t?TIER[t]:'';
+  el.style.color=t===1?'var(--rose)':t===2?'var(--honey)':'var(--sage)';
+}
+function closeOuter(e){if(e.target.id==='ov')closeModal()}
+function closeModal(){document.getElementById('modal-slot').innerHTML=''}
+
+function saveItem(){
+  const it={
+    id:editId||'m'+Date.now(),
+    num:document.getElementById('m-num').value.trim(),
+    brand:document.getElementById('m-brand').value.trim(),
+    desc:document.getElementById('m-desc').value.trim(),
+    size:document.getElementById('m-size').value.trim(),
+    condition:document.getElementById('m-cond').value,
+    buy:document.getElementById('m-buy').value,
+    sell:document.getElementById('m-sell').value,
+    status:document.getElementById('m-status').value,
+    photoUrl:editId?stock.find(i=>i.id===editId)?.photoUrl||'':'',
+    driveId:editId?stock.find(i=>i.id===editId)?.driveId||'':'',
+    filename:editId?stock.find(i=>i.id===editId)?.filename||'':'',
+  };
+  if(editId){const i=stock.findIndex(x=>x.id===editId);if(i>-1)stock[i]=it}
+  else stock.unshift(it);
+  save();closeModal();
+}
+function delItem(id){if(!confirm('Remove?'))return;stock=stock.filter(i=>i.id!==id);save();closeModal()}
+
+render();
+</script>
+</body>
+</html>
