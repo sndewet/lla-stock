@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Little Loved Again — Stock List</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#D4537E;--rose-l:#FBEAF0;--rose-d:#72243E;--sage:#1D9E75;--sage-l:#E1F5EE;--sage-d:#085041;--honey:#BA7517;--honey-l:#FAEEDA;--honey-d:#633806;--cream:#F9F6F1;--ink:#2C2A26;--muted:#7A7570;--border:#E8E3DC}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.logo{display:flex;align-items:center;gap:9px}
+.logo-mark{width:30px;height:30px;background:var(--rose-l);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:15px;height:15px;fill:var(--rose)}
+.logo-name{font-family:'Fraunces',serif;font-size:15px;color:var(--ink)}
+.logo-sub{font-size:11px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:14px 16px 6px}
+.stat{background:white;border-radius:12px;border:1px solid var(--border);padding:11px 14px;text-align:center}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.stat-num{font-family:'Fraunces',serif;font-size:24px;color:var(--ink)}
+.stat-num.green{color:var(--sage)}
+.tabs{display:flex;gap:6px;padding:12px 16px 8px}
+.tab{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:white;color:var(--muted)}
+.tab.active{background:var(--rose);color:white;border-color:var(--rose)}
+.add-btn{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 16px 10px;width:calc(100% - 32px);font-size:13px;font-weight:600;padding:9px;color:var(--rose);background:transparent;border:1.5px dashed #F4C0D1;border-radius:12px;cursor:pointer}
+.list{padding:0 16px;display:flex;flex-direction:column;gap:8px;padding-bottom:3rem}
+.card{display:flex;gap:10px;align-items:flex-start;background:white;border:1px solid var(--border);border-radius:14px;padding:10px;cursor:pointer}
+.card.warn{border-left:3px solid var(--honey)}
+.thumb{width:60px;height:60px;flex-shrink:0;border-radius:10px;background:#F0EDE8;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb svg{width:24px;height:24px;stroke:#B0A898;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.body{flex:1;min-width:0}
+.row1{display:flex;align-items:flex-start;justify-content:space-between;gap:5px;margin-bottom:2px}
+.brand{font-size:13px;font-weight:600;color:var(--ink)}
+.brand.u{color:var(--honey);font-style:italic}
+.desc{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:5px}
+.badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
+.b{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.b-num{background:#F0EDE8;color:#7A7570}
+.b-size{background:var(--sage-l);color:var(--sage-d)}
+.b-t1{background:var(--rose-l);color:var(--rose-d)}
+.b-t2{background:var(--honey-l);color:var(--honey-d)}
+.b-t3{background:#F0EDE8;color:#7A7570}
+.b-warn{background:var(--honey-l);color:var(--honey-d)}
+.pill{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;border:none}
+.p-available{background:var(--sage-l);color:var(--sage-d)}
+.p-listed{background:var(--honey-l);color:var(--honey-d)}
+.p-sold{background:#F0EDE8;color:#7A7570}
+.prices{display:flex;gap:8px;align-items:center}
+.price-sm{font-size:11px;color:var(--muted)}
+.profit{font-size:12px;font-weight:700;color:var(--sage)}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:13px}
+.overlay{position:fixed;inset:0;background:rgba(44,42,38,.4);display:flex;align-items:flex-start;justify-content:center;padding:40px 14px 14px;z-index:30;overflow-y:auto}
+.modal{background:white;border-radius:16px;border:1px solid var(--border);width:100%;max-width:420px;padding:18px}
+.modal-title{font-family:'Fraunces',serif;font-size:16px;margin-bottom:14px;color:var(--ink)}
+.modal label{font-size:11px;color:var(--muted);display:block;margin:10px 0 3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.modal input,.modal select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--ink)}
+.modal input:focus,.modal select:focus{outline:none;border-color:var(--rose)}
+.half{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bhint{font-size:11px;font-weight:600;margin-top:3px;min-height:14px}
+.photo-big{width:100%;height:120px;border-radius:10px;object-fit:cover;margin-bottom:12px}
+.mactions{display:flex;gap:8px;margin-top:16px}
+.mactions button{flex:1;padding:9px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer}
+.btn-save{background:var(--rose);color:white;border:none}
+.btn-cancel{background:white;color:var(--muted);border:1px solid var(--border)}
+.btn-del{background:white;color:#C0392B;border:1px solid #E8AAAA;flex:0 0 auto;padding:9px 13px}
+</style>
+</head>
+<body>
+<div id="app" style="padding-bottom:2rem">
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 20 20"><path d="M10 17s-7-4.5-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 17 8c0 4.5-7 9-7 9z"/></svg></div>
+    <div><div class="logo-name">Little Loved Again</div><div class="logo-sub">Buttons &amp; Bows</div></div>
+  </div>
+</div>
+<div class="stats">
+  <div class="stat"><div class="stat-label">In stock</div><div class="stat-num" id="s-stock">0</div></div>
+  <div class="stat"><div class="stat-label">Listed</div><div class="stat-num" id="s-listed">0</div></div>
+  <div class="stat"><div class="stat-label">Sold</div><div class="stat-num" id="s-sold">0</div></div>
+  <div class="stat"><div class="stat-label">Total profit</div><div class="stat-num green" id="s-profit">$0.00</div></div>
+</div>
+<div class="tabs">
+  <button class="tab active" onclick="setTab('active',this)">Stock</button>
+  <button class="tab" onclick="setTab('sold',this)">Sold archive</button>
+</div>
+<button class="add-btn" id="addbtn" onclick="openAdd()">+ Add item manually</button>
+<div class="list" id="list"></div>
+<div id="mslot"></div>
+<script>
+const BRANDS={
+  'bobo choses':1,'lacey lane':1,'ziggy lou':1,'oobi':1,
+  'goldie + ace':2,'goldie+ace':2,'kynd baby':2,'kynd':2,'wilson + frenchy':2,'wilson+frenchy':2,'purebaby':2,'buho':2,'rockyourkid':2,'rock your kid':2,'macpac':2,
+  'seed heritage':3,'seed':3,'country road':3,'bonds':3,'next':3,'nextbaby':3,'h&m':3,'target':3,'cotton on':3,'gap':3,'marquise':3,'sprout':3,'olliesplace':3,"ollie's place":3,'pure&soft':3,'pure and soft':3
+};
+const TIER={1:'Top resale',2:'Strong seller',3:'Quick flip'};
+const KEY='lla_gh_v3';
+
+const SEED=[
+  {id:'s01',driveId:'1iXbtQc26DQgcaN-OLJHjsPmJupeoIk_y',num:'001',brand:'bonds',desc:'romper-cozysuit',size:'0000',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1iXbtQc26DQgcaN-OLJHjsPmJupeoIk_y&sz=w200'},
+  {id:'s02',driveId:'1RvIDNbzybNdDoFAXZuVYRH8LoMbtbE8A',num:'002',brand:'buho',desc:'sunsuit-romper',size:'6m',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1RvIDNbzybNdDoFAXZuVYRH8LoMbtbE8A&sz=w200'},
+  {id:'s03',driveId:'17KsA2o8rWNWC_K3gN0k2Trrcr6nL09KM',num:'003',brand:'marquise',desc:'dress',size:'0',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=17KsA2o8rWNWC_K3gN0k2Trrcr6nL09KM&sz=w200'},
+  {id:'s04',driveId:'14yO9h79VxjKsyjVlIn_fnttNyjfWNf6e',num:'004',brand:'h&m',desc:'dress',size:'AUS6',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=14yO9h79VxjKsyjVlIn_fnttNyjfWNf6e&sz=w200'},
+  {id:'s05',driveId:'1ml52qPm6yy-CZPrsb_nS8zPQ5T8RlTee',num:'005',brand:'nextbaby',desc:'sleepsuit',size:'000',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1ml52qPm6yy-CZPrsb_nS8zPQ5T8RlTee&sz=w200'},
+  {id:'s06',driveId:'1CgdJcWsbJrWJ8BpZ8musiCXRgBtao1wc',num:'006',brand:'olliesplace',desc:'romper',size:'0000',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1CgdJcWsbJrWJ8BpZ8musiCXRgBtao1wc&sz=w200'},
+  {id:'s07',driveId:'1yLOw3RBFivh7VPnO_HGOVj0eb78DgbqE',num:'007',brand:'bonds',desc:'romper-wondersuit',size:'000',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1yLOw3RBFivh7VPnO_HGOVj0eb78DgbqE&sz=w200'},
+  {id:'s08',driveId:'1qLRKwYtIMnHe5FDpCRav4mA0MBod-Vkj',num:'008',brand:'sprout',desc:'jumper',size:'000',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1qLRKwYtIMnHe5FDpCRav4mA0MBod-Vkj&sz=w200'},
+  {id:'s09',driveId:'1T1U5WspnNpxgZL3wD9UqjngfujGKK4Jl',num:'009',brand:'purebaby',desc:'romper',size:'000',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1T1U5WspnNpxgZL3wD9UqjngfujGKK4Jl&sz=w200'},
+  {id:'s10',driveId:'1cq6SPArH5TK7zZOnaGLoq4_aiQ1K1osc',num:'010',brand:'pure&soft',desc:'dress',size:'3-6m',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1cq6SPArH5TK7zZOnaGLoq4_aiQ1K1osc&sz=w200'},
+  {id:'s11',driveId:'1UukAVVNiWWQk7AuCN791FTZfnep-1Aw2',num:'011',brand:'sprout',desc:'togs',size:'00',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1UukAVVNiWWQk7AuCN791FTZfnep-1Aw2&sz=w200'},
+  {id:'s12',driveId:'1fZ7TZj6VfIL4j48fiwYIA93IcAeSwPoi',num:'012',brand:'rockyourkid',desc:'jacket-tuxjacket',size:'1',buy:'2',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1fZ7TZj6VfIL4j48fiwYIA93IcAeSwPoi&sz=w200'},
+  {id:'s13',driveId:'1-rKxHH1BNmkto78vQVAiBpa2H65g3Jj1',num:'013',brand:'macpac',desc:'snowsuit',size:'2',buy:'4',sell:'',status:'available',photoUrl:'https://drive.google.com/thumbnail?id=1-rKxHH1BNmkto78vQVAiBpa2H65g3Jj1&sz=w200'},
+];
+
+let stock=JSON.parse(localStorage.getItem(KEY)||'[]');
+for(const s of SEED){
+  const i=stock.findIndex(x=>x.driveId===s.driveId);
+  if(i>-1){stock[i]={...stock[i],num:s.num,brand:s.brand,desc:s.desc,size:s.size,buy:s.buy||stock[i].buy,photoUrl:s.photoUrl}}
+  else stock.push({...s,condition:'Excellent'});
+}
+stock.sort((a,b)=>(parseInt(a.num)||999)-(parseInt(b.num)||999));
+localStorage.setItem(KEY,JSON.stringify(stock));
+
+let tab='active',editId=null;
+function save(){localStorage.setItem(KEY,JSON.stringify(stock));render()}
+function gt(b){const k=(b||'').toLowerCase();for(const key of Object.keys(BRANDS)){if(k.includes(key))return BRANDS[key]}return 0}
+function tc(t){return t===1?'b-t1':t===2?'b-t2':'b-t3'}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function imgErr(el){el.parentElement.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#B0A898" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.86H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.86l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>'}
+function setTab(t,el){tab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('addbtn').style.display=t==='active'?'flex':'none';render()}
+function cycleStatus(id,e){e.stopPropagation();const it=stock.find(i=>i.id===id);if(!it)return;const cy={available:'listed',listed:'sold',sold:'available'};it.status=cy[it.status]||'available';save()}
+
+function render(){
+  const inStock=stock.filter(i=>i.status==='available').length;
+  const listed=stock.filter(i=>i.status==='listed').length;
+  const sold=stock.filter(i=>i.status==='sold').length;
+  const profit=stock.filter(i=>i.status==='sold').reduce((s,i)=>s+((parseFloat(i.sell)||0)-(parseFloat(i.buy)||0)),0);
+  document.getElementById('s-stock').textContent=inStock;
+  document.getElementById('s-listed').textContent=listed;
+  document.getElementById('s-sold').textContent=sold;
+  document.getElementById('s-profit').textContent='$'+profit.toFixed(2);
+  const visible=tab==='active'?stock.filter(i=>i.status!=='sold'):stock.filter(i=>i.status==='sold');
+  const el=document.getElementById('list');
+  if(!visible.length){el.innerHTML='<div class="empty">'+(tab==='active'?'No stock yet':'No sold items yet')+'</div>';return}
+  const SHIRT='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#B0A898" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.86H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.86l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>';
+  el.innerHTML=visible.map(it=>{
+    const t=gt(it.brand);
+    const p=it.sell&&it.buy?((parseFloat(it.sell)-parseFloat(it.buy)).toFixed(2)):null;
+    const ni=!it.sell;
+    const sl=it.status.charAt(0).toUpperCase()+it.status.slice(1);
+    const ph=it.photoUrl?`<img src="${esc(it.photoUrl)}" alt="" onerror="imgErr(this)">`:SHIRT;
+    return`<div class="card${ni?' warn':''}" onclick="openEdit('${it.id}')">
+      <div class="thumb">${ph}</div>
+      <div class="body">
+        <div class="row1">
+          <div><div class="brand">${esc(it.brand)}</div><div class="desc">${esc(it.desc||'—')}</div></div>
+          <button class="pill p-${it.status}" onclick="cycleStatus('${it.id}',event)">${sl}</button>
+        </div>
+        <div class="badges">
+          ${it.num?`<span class="b b-num">#${esc(it.num)}</span>`:''}
+          ${it.size?`<span class="b b-size">Size ${esc(it.size)}</span>`:''}
+          ${t?`<span class="b ${tc(t)}">${TIER[t]}</span>`:''}
+          ${ni?'<span class="b b-warn">No sell price</span>':''}
+        </div>
+        <div class="prices">
+          ${it.buy?`<span class="price-sm">Paid $${parseFloat(it.buy).toFixed(2)}</span>`:''}
+          ${it.sell?`<span class="price-sm">→ $${parseFloat(it.sell).toFixed(2)}</span>`:''}
+          ${p!==null?`<span class="profit">+$${p}</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAdd(){editId=null;showModal(null)}
+function openEdit(id){editId=id;showModal(stock.find(i=>i.id===id))}
+function showModal(it){
+  const isEdit=!!it;
+  document.getElementById('mslot').innerHTML=`<div class="overlay" id="ov" onclick="closeOuter(event)"><div class="modal">
+    <div class="modal-title">${isEdit?'Edit item':'Add item'}</div>
+    ${it?.photoUrl?`<img class="photo-big" src="${esc(it.photoUrl)}" alt="" onerror="this.style.display='none'">`:''}
+    <label>Item #</label><input id="m-num" value="${esc(it?.num)}" placeholder="014" style="max-width:90px">
+    <label>Brand</label><input id="m-brand" value="${esc(it?.brand)}" placeholder="e.g. oobi, bonds…" oninput="bHint(this.value)">
+    <div class="bhint" id="bhint"></div>
+    <label>Description</label><input id="m-desc" value="${esc(it?.desc)}" placeholder="e.g. romper, dress…">
+    <div class="half">
+      <div><label>Size</label><input id="m-size" value="${esc(it?.size)}" placeholder="000/0/1/2"></div>
+      <div><label>Condition</label><select id="m-cond">${['Excellent','Great','Good','Fair'].map(c=>`<option${it?.condition===c?' selected':''}>${c}</option>`).join('')}</select></div>
+    </div>
+    <div class="half">
+      <div><label>Paid ($)</label><input id="m-buy" type="number" step="0.01" value="${esc(it?.buy)}" placeholder="0.00"></div>
+      <div><label>Sell ($)</label><input id="m-sell" type="number" step="0.01" value="${esc(it?.sell)}" placeholder="0.00"></div>
+    </div>
+    <label>Status</label>
+    <select id="m-status">${['available','listed','sold'].map(s=>`<option value="${s}"${it?.status===s?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}</select>
+    <div class="mactions">
+      ${isEdit?`<button class="btn-del" onclick="delItem('${it.id}')">🗑</button>`:''}
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveItem()">Save</button>
+    </div>
+  </div></div>`;
+  if(it?.brand)bHint(it.brand);
+}
+function bHint(v){const t=gt(v);const el=document.getElementById('bhint');if(!el)return;el.textContent=t?TIER[t]:'';el.style.color=t===1?'var(--rose)':t===2?'var(--honey)':'var(--sage)'}
+function closeOuter(e){if(e.target.id==='ov')closeModal()}
+function closeModal(){document.getElementById('mslot').innerHTML=''}
+function saveItem(){
+  const base=editId?stock.find(i=>i.id===editId):{};
+  const it={...base,id:editId||'m'+Date.now(),num:document.getElementById('m-num').value.trim(),brand:document.getElementById('m-brand').value.trim(),desc:document.getElementById('m-desc').value.trim(),size:document.getElementById('m-size').value.trim(),condition:document.getElementById('m-cond').value,buy:document.getElementById('m-buy').value,sell:document.getElementById('m-sell').value,status:document.getElementById('m-status').value};
+  if(editId){const i=stock.findIndex(x=>x.id===editId);if(i>-1)stock[i]=it}else stock.unshift(it);
+  save();closeModal();
+}
+function delItem(id){if(!confirm('Remove this item?'))return;stock=stock.filter(i=>i.id!==id);save();closeModal()}
+render();
+</script>
+</div>
+</body>
+</html>
